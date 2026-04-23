@@ -1,0 +1,9 @@
+*.o
+*.obj
+campus_nav
+campus_nav.exe
+build/
+.DS_Store
+Thumbs.db
+.idea/
+*.xcodeproj/
