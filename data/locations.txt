@@ -1,0 +1,5 @@
+0|Thompson Hall|Academic|Main computer science building
+1|Founders Dining|Dining|Central dining hall
+2|Lot 12|Parking|North campus parking lot
+3|Rec Center|Recreation|Gym and fitness facility
+4|Smith Residence|Residence|Freshman dormitory
