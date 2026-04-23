@@ -7,3 +7,7 @@ build/
 Thumbs.db
 .idea/
 *.xcodeproj/
+.Rhistory
+.Rdata
+.Ruserdata
+
