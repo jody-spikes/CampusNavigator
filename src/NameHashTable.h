@@ -1,73 +1,92 @@
-#ifndef NAME_HASH_TABLE_H
-#define NAME_HASH_TABLE_H
+/*
+* Author: Jack Meehan
+* File: NameHashTable.h
+* Due Date: 5/6/2026
+* Date Created: 5/4/2026
+* Date Last Modified: 5/4/2026
+ */
 
-// ============================================================================
-// NameHashTable.h - Custom hash table mapping location name -> LocationID
-// OWNER: Student 2
-// ----------------------------------------------------------------------------
-// Implementation requirements:
-//   - Separate chaining for collisions (satisfies the "custom linked list"
-//     requirement for the whole project - don't skip it)
-//   - Rehash when load factor exceeds ~0.75
-//   - DO NOT use std::unordered_map - we have to write our own
-//
-// This table does NOT own Location data - it stores a LocationID that
-// points back into the Graph.
-// ============================================================================
+#ifndef NAMEHASHTABLE_H_
+#define NAMEHASHTABLE_H_
 
-#include "Location.h"
+#include <vector>
 #include <string>
+
+using namespace std;
 
 class NameHashTable {
 public:
-    NameHashTable();
+
+    struct Node {
+    	string name;
+    	int id;
+    	Node* next;
+
+    	//node constructor
+    	Node(const string& n, int i, Node* next = nullptr);
+    };
+
+    //Hash table constructor
+    explicit NameHashTable(size_t initialSize = 101, double maxLoadFactor = 0.75);
+
+    //hash table destructor
     ~NameHashTable();
 
-    // Inserts a (name -> id) mapping. If the name already exists,
-    // overwrite its id.
-    // TODO: hash the name, walk the chain, insert or update.
-    //       If load factor > threshold after insert, call rehash().
-    void insert(const std::string& name, LocationID id);
+    //Insert
+    bool insert(const string& name, const int& id);
 
-    // Removes the mapping for 'name'. Returns true if something was removed.
-    // TODO: hash, walk the chain, unlink the node, delete it.
-    bool remove(const std::string& name);
+    //determines if a node with a given name exists
+    bool contains(const string& name) const;
 
-    // Returns the LocationID for 'name', or INVALID_ID if not present.
-    // TODO: hash, walk the chain, return the stored id or INVALID_ID.
-    LocationID find(const std::string& name) const;
+    //removes the node with the given name
+    bool remove(const string& name);
 
-    // Removes everything.
-    void clear();
+    //searches for a node with given name and returns its id
+    int find(const string& name) const;
 
-    // Number of stored (name -> id) mappings.
+    //rehashes the table and deletes the old lists
+    void rehash();
+
+    //returns how many elements are in the table
     size_t size() const;
 
+    //returns the max capacity of the table
+    size_t tableSize() const;
+
+    //calculates the current load factor of the table
+    double loadFactor() const;
+
+    //returns the total number of collisions
+    size_t collisionCount() const;
+
+    //returns the number of rehashes completed
+    size_t rehashCount() const;
+
+    //returns a string of the names of the nodes in the table
+    vector<string> strings() const;
+
+    //clears he data of each node and deletes them
+    void clear();
+
+
 private:
-    // TODO: Define a private Node struct for the chain:
-    //   struct Node {
-    //       std::string name;
-    //       LocationID  id;
-    //       Node*       next;
-    //   };
+    Node** buckets_;
+    size_t elementCount_;
+    size_t collisionCount_;
+    size_t rehashCount_;
+    double maxLoadFactor_;
+    size_t capacity_;
 
-    // TODO: Pick your bucket storage.
-    //   Simplest: Node** buckets_;  (array of Node* of length capacity_)
-    //   Or:       std::vector<Node*> buckets_;
+    //returns the bucket that this particular name goes in
+    size_t bucketIndex(const string& string) const;
 
-    // TODO: Also track:
-    //   size_t capacity_;   // number of buckets (start at something like 16)
-    //   size_t size_;       // number of stored entries
+    //determines if a number is prime (for rehashing)
+    static bool isPrime(size_t n);
 
-    // Hash a string to a bucket index in [0, capacity_).
-    // TODO: implement a simple string hash (e.g., polynomial rolling hash,
-    //       or std::hash<std::string> mod capacity - your call).
-    size_t hash(const std::string& key) const;
-
-    // Doubles capacity and redistributes all entries.
-    // TODO: allocate new bucket array, walk the old one, rehash each node
-    //       into the new array, delete the old array.
-    void rehash();
+    //finds the next prime number for rehashing
+    static size_t nextPrime(size_t n);
 };
 
-#endif // NAME_HASH_TABLE_H
+
+
+#endif /* NAMEHASHTABLE_H_ */
