@@ -19,47 +19,44 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 class SortedIndex {
 public:
     SortedIndex();
     ~SortedIndex();
 
     // Inserts (name -> id). If name already exists, overwrite its id.
-    // TODO: standard BST insert. If doing AVL, rebalance on the way up.
-    void insert(const std::string& name, LocationID id);
+    void insert(const string& name, LocationID id);
 
     // Removes the node with the given name. Returns true on success.
-    // TODO: BST delete. Three cases: leaf, one child, two children
-    //       (replace with in-order successor for the two-child case).
-    bool remove(const std::string& name);
+    bool remove(const string& name);
 
     // Returns all LocationIDs in alphabetical order by name.
-    // TODO: in-order traversal (recursive is fine), push IDs into the vector.
-    std::vector<LocationID> inOrder() const;
+    vector<LocationID> inOrder() const;
 
     // EXTENSION: returns all LocationIDs whose names start with the given prefix.
-    // TODO: walk the tree, collecting anything in the matching subtree range.
-    std::vector<LocationID> findByPrefix(const std::string& prefix) const;
+    vector<LocationID> findByPrefix(const string& prefix) const;
 
 private:
-    // TODO: Define a private Node struct:
-    //   struct Node {
-    //       std::string name;
-    //       LocationID  id;
-    //       Node*       left;
-    //       Node*       right;
-    //       int         height;   // only needed for AVL
-    //   };
+    struct Node {
+        string name;
+        LocationID id;
+        Node* left;
+        Node* right;
 
-    // TODO: Node* root_ = nullptr;
+        Node(const string& n, LocationID i)
+            : name(n), id(i), left(nullptr), right(nullptr) {}
+    };
 
-    // Recursive helpers. Using helpers keeps the public API clean and
-    // makes it easy to pass/return subtree roots.
-    // TODO: implement these.
-    //   Node* insertHelper(Node* node, const std::string& name, LocationID id);
-    //   Node* removeHelper(Node* node, const std::string& name, bool& removed);
-    //   void  inOrderHelper(Node* node, std::vector<LocationID>& out) const;
-    //   void  destroy(Node* node);  // post-order delete, called by destructor
+    Node* root_;
+
+    Node* insertHelper(Node* node, const string& name, LocationID id);
+    Node* removeHelper(Node* node, const string& name, bool& removed);
+    void inOrderHelper(Node* node, vector<LocationID>& out) const;
+    void prefixHelper(Node* node, const string& prefix,
+                      vector<LocationID>& out) const;
+    void destroy(Node* node);
 };
 
 #endif // SORTED_INDEX_H
