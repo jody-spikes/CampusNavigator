@@ -1,42 +1,136 @@
 // ============================================================================
 // SortedIndex.cpp - Implementation of the sorted tree index
-// OWNER: Student 3
+// OWNER: Hailey Pieper
 // ============================================================================
 
 #include "SortedIndex.h"
 
-SortedIndex::SortedIndex() {
-    // TODO: initialize root_ to nullptr.
-}
+SortedIndex::SortedIndex() : root_(nullptr) {}
 
 SortedIndex::~SortedIndex() {
-    // TODO: call destroy(root_) to free all nodes.
+    destroy(root_);
 }
 
-void SortedIndex::insert(const std::string& name, LocationID id) {
-    // TODO: root_ = insertHelper(root_, name, id);
-    (void)name; (void)id;
+void SortedIndex::insert(const string& name, LocationID id) {
+    root_ = insertHelper(root_, name, id);
 }
 
-bool SortedIndex::remove(const std::string& name) {
-    // TODO:
-    //   bool removed = false;
-    //   root_ = removeHelper(root_, name, removed);
-    //   return removed;
-    (void)name;
-    return false;
+bool SortedIndex::remove(const string& name) {
+    bool removed = false;
+    root_ = removeHelper(root_, name, removed);
+    return removed;
 }
 
-std::vector<LocationID> SortedIndex::inOrder() const {
-    // TODO:
-    //   std::vector<LocationID> result;
-    //   inOrderHelper(root_, result);
-    //   return result;
-    return {};
+vector<LocationID> SortedIndex::inOrder() const {
+    vector<LocationID> result;
+    inOrderHelper(root_, result);
+    return result;
 }
 
-std::vector<LocationID> SortedIndex::findByPrefix(const std::string& prefix) const {
-    // EXTENSION: optional extra credit.
-    (void)prefix;
-    return {};
+vector<LocationID> SortedIndex::findByPrefix(const string& prefix) const {
+    vector<LocationID> result;
+    prefixHelper(root_, prefix, result);
+    return result;
+}
+
+SortedIndex::Node* SortedIndex::insertHelper(Node* node,
+                                             const string& name,
+                                             LocationID id) {
+    if (node == nullptr) {
+        return new Node(name, id);
+    }
+
+    if (name < node->name) {
+        node->left = insertHelper(node->left, name, id);
+    } else if (name > node->name) {
+        node->right = insertHelper(node->right, name, id);
+    } else {
+        node->id = id;
+    }
+
+    return node;
+}
+
+SortedIndex::Node* SortedIndex::removeHelper(Node* node,
+                                             const string& name,
+                                             bool& removed) {
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    if (name < node->name) {
+        node->left = removeHelper(node->left, name, removed);
+        return node;
+    }
+
+    if (name > node->name) {
+        node->right = removeHelper(node->right, name, removed);
+        return node;
+    }
+
+    removed = true;
+
+    if (node->left == nullptr && node->right == nullptr) {
+        delete node;
+        return nullptr;
+    }
+
+    if (node->left == nullptr) {
+        Node* temp = node->right;
+        delete node;
+        return temp;
+    }
+
+    if (node->right == nullptr) {
+        Node* temp = node->left;
+        delete node;
+        return temp;
+    }
+
+    Node* successor = node->right;
+    while (successor->left != nullptr) {
+        successor = successor->left;
+    }
+
+    node->name = successor->name;
+    node->id = successor->id;
+
+    bool dummyRemoved = false;
+    node->right = removeHelper(node->right, successor->name, dummyRemoved);
+    return node;
+}
+
+void SortedIndex::inOrderHelper(Node* node, vector<LocationID>& out) const {
+    if (node == nullptr) {
+        return;
+    }
+
+    inOrderHelper(node->left, out);
+    out.push_back(node->id);
+    inOrderHelper(node->right, out);
+}
+
+void SortedIndex::prefixHelper(Node* node, const string& prefix,
+                               vector<LocationID>& out) const {
+    if (node == nullptr) {
+        return;
+    }
+
+    prefixHelper(node->left, prefix, out);
+
+    if (node->name.compare(0, prefix.size(), prefix) == 0) {
+        out.push_back(node->id);
+    }
+
+    prefixHelper(node->right, prefix, out);
+}
+
+void SortedIndex::destroy(Node* node) {
+    if (node == nullptr) {
+        return;
+    }
+
+    destroy(node->left);
+    destroy(node->right);
+    delete node;
 }
