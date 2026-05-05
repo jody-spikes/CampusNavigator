@@ -3,3 +3,18 @@
 2|Lot 12|Parking|North campus parking lot
 3|Rec Center|Recreation|Gym and fitness facility
 4|Smith Residence|Residence|Freshman dormitory
+5|Johnson Library|Academic|Central campus library
+6|Maxwell Chapel|Spiritual|Main campus chapel
+7|Woods Residence|Residence|Honors dormitory
+8|Gates Residence|Residence|Sophomore dormitory
+9|James Academic Center|Academic|Center for academic success
+10|Lot 3|Parking|campus parking garage
+11|Laurence Law School|Academic|Law school building
+12|Quincy Dining Hall|Dining|Campus dining hall
+13|Daniel Business School|Academic|Main business building
+14|Memorial Park|Recreation|Campus park and field
+15|Samson Residence|Residence|Freshman dormitory
+16|Alan Chapel|Spiritual| Campus spiritual life center 
+17|Lot 48|Parking|campus parking Garage
+18|Washingon Residence|Residence|Sophomore dormitory
+19|Police Office|Safety|Dedicated Campus Police Department
