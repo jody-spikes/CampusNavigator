@@ -18,7 +18,7 @@ const LocationID INVALID_ID = -1;
 
 // Category of a campus location.
 // If you add a new category here, also update categoryToString() and
-// stringToCategory() in Location.cpp (or wherever you implement them).
+// stringToCategory() in Location.cpp.
 enum class Category {
     Academic,
     Residence,
@@ -40,12 +40,6 @@ struct Location {
 // Free functions for converting Category to/from string.
 // Used by FileIO when reading/writing files, and by the UI when
 // displaying categories to the user.
-//
-// TODO (whoever implements this - probably FileIO or shared):
-//   - categoryToString(Category::Dining) should return "Dining"
-//   - stringToCategory("Dining") should return Category::Dining
-//   - stringToCategory should be case-insensitive if possible
-//   - Unknown strings should return Category::Other
 std::string categoryToString(Category c);
 Category stringToCategory(const std::string& s);
 
