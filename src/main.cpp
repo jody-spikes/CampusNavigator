@@ -78,49 +78,161 @@ int main() {
                 std::cout << "Goodbye!\n";
                 return 0;
             case 1: {
-                auto ids = campus.listAll();
-                if(ids.empty()){
-                    std::cout << "No locations loaded.\n";
-                    break;
-                }
-                std::cout << "All locations (" << ids.size() << "):\n";
-                for (LocationID id : ids){
-                    const Location* loc = campus.getLocation(id);
-                    if(loc) printLocation(*loc);
+                std::vector<LocationID> ids = campus.listAll();
+
+                if (ids.empty()) {
+                    std::cout << "No locations found.\n";
+                } else {
+                    for (LocationID id : ids) {
+                        const Location* loc = campus.getLocation(id);
+                        printLocation(loc);
+                        std::cout << "\n";
+                    }
                 }
                 break;
             }
             case 2:
-                // TODO: prompt for name, call campus.findByName(), print result.
-                std::cout << "[TODO] Search by name\n";
+                std::string name;
+                std::cout << "Enter location name: ";
+                std::getline(std::cin, name);
+
+                LocationID id = campus.findByName(name);
+                if (id == INVALID_ID) {
+                    std::cout << "Location not found.\n";
+                } else {
+                    const Location* loc = campus.getLocation(id);
+                    printLocation(loc);
+                }
                 break;
             case 3:
-                // TODO: prompt for category, call campus.listByCategory().
-                std::cout << "[TODO] Display by category\n";
+                Category category = promptCategory();
+                std::vector<LocationID> ids = campus.listByCategory(category);
+
+                if (ids.empty()) {
+                    std::cout << "No locations found in that category.\n";
+                } else {
+                    for (LocationID id : ids) {
+                        const Location* loc = campus.getLocation(id);
+                        printLocation(loc);
+                        std::cout << "\n";
+                    }
+                }
                 break;
             case 4:
-                // TODO: prompt for two names, call campus.route(), print path.
-                std::cout << "[TODO] Find route\n";
+                std::string fromName, toName;
+
+                std::cout << "Enter starting location name: ";
+                std::getline(std::cin, fromName);
+
+                std::cout << "Enter destination location name: ";
+                std::getline(std::cin, toName);
+
+                std::vector<LocationID> path = campus.route(fromName, toName);
+
+                if (path.empty()) {
+                    std::cout << "No route found.\n";
+                } else {
+                    std::cout << "Route:\n";
+                    for (size_t i = 0; i < path.size(); ++i) {
+                        const Location* loc = campus.getLocation(path[i]);
+                        if (loc != nullptr) {
+                            std::cout << loc->name;
+                            if (i + 1 < path.size()) {
+                                std::cout << " -> ";
+                            }
+                        }
+                    }
+                    std::cout << "\n";
+                }
                 break;
             case 5:
-                // TODO: prompt for name, category, description; call addLocation.
-                std::cout << "[TODO] Add location\n";
+                std::string name, description;
+
+                std::cout << "Enter location name: ";
+                std::getline(std::cin, name);
+
+                Category category = promptCategory();
+
+                std::cout << "Enter description: ";
+                std::getline(std::cin, description);
+
+                LocationID id = campus.addLocation(name, category, description);
+                if (id == INVALID_ID) {
+                    std::cout << "Failed to add location.\n";
+                } else {
+                    std::cout << "Location added with ID " << id << ".\n";
+                }
                 break;
             case 6:
-                // TODO: prompt for name, call removeLocation.
-                std::cout << "[TODO] Remove location\n";
+                std::string name;
+                std::cout << "Enter location name to remove: ";
+                std::getline(std::cin, name);
+
+                if (campus.removeLocation(name)) {
+                    std::cout << "Location removed successfully.\n";
+                } else {
+                    std::cout << "Failed to remove location.\n";
+                }
                 break;
             case 7:
-                // TODO: prompt for two names + distance, call addConnection.
-                std::cout << "[TODO] Add connection\n";
+                std::string fromName, toName;
+                double distance;
+
+                std::cout << "Enter first location name: ";
+                std::getline(std::cin, fromName);
+
+                std::cout << "Enter second location name: ";
+                std::getline(std::cin, toName);
+
+                std::cout << "Enter distance: ";
+                if (!(std::cin >> distance)) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Invalid distance.\n";
+                    break;
+                }
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                if (campus.addConnection(fromName, toName, distance)) {
+                    std::cout << "Connection added successfully.\n";
+                } else {
+                    std::cout << "Failed to add connection.\n";
+                }
                 break;
             case 8:
-                // TODO: prompt for two names, call removeConnection.
-                std::cout << "[TODO] Remove connection\n";
+                std::string fromName, toName;
+
+                std::cout << "Enter first location name: ";
+                std::getline(std::cin, fromName);
+
+                std::cout << "Enter second location name: ";
+                std::getline(std::cin, toName);
+
+                if (campus.removeConnection(fromName, toName)) {
+                    std::cout << "Connection removed successfully.\n";
+                } else {
+                    std::cout << "Failed to remove connection.\n";
+                }
                 break;
             case 9:
-                // TODO: prompt for old name + new fields, call updateLocation.
-                std::cout << "[TODO] Update location\n";
+                std::string oldName, newName, newDescription;
+
+                std::cout << "Enter current location name: ";
+                std::getline(std::cin, oldName);
+
+                std::cout << "Enter new location name: ";
+                std::getline(std::cin, newName);
+
+                Category newCategory = promptCategory();
+
+                std::cout << "Enter new description: ";
+                std::getline(std::cin, newDescription);
+
+                if (campus.updateLocation(oldName, newName, newCategory, newDescription)) {
+                    std::cout << "Location updated successfully.\n";
+                } else {
+                    std::cout << "Failed to update location.\n";
+                }
                 break;
             default:
                 std::cout << "Unknown choice.\n";
