@@ -48,6 +48,15 @@ static void printLocation(const Location& loc){
               << "      " << loc.description << "\n";
 }
 
+static Category promptCategory() {
+    std::string input;
+
+    std::cout << "Enter category (Academic, Residence, Dining, Parking, Recreation, Other): ";
+    std::getline(std::cin, input);
+
+    return stringToCategory(input);
+}
+
 //Read line of string from user helper func
 static std::string readLine(const std::string& prompt){
     std::cout << prompt;
