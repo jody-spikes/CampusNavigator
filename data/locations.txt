@@ -9,7 +9,7 @@
 8|Gates Residence|Residence|Sophomore dormitory
 9|James Academic Center|Academic|Center for academic success
 10|Lot 3|Parking|campus parking garage
-11|laurence Law School|Academic|Law school building
+11|Laurence Law School|Academic|Law school building
 12|Quincy Dining Hall|Dining|Campus dining hall
 13|Daniel Business School|Academic|Main business building
 14|Memorial Park|Recreation|Campus park and field
@@ -17,4 +17,4 @@
 16|Alan Chapel|Spiritual| Campus spiritual life center 
 17|Lot 48|Parking|campus parking Garage
 18|Washingon Residence|Residence|Sophomore dormitory
-19|Polic Office|Safety|Dedicated Campus Police Department
+19|Police Office|Safety|Dedicated Campus Police Department
