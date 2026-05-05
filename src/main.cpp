@@ -12,7 +12,7 @@
 
 // Prints the menu options from the project spec.
 static void printMenu() {
-    std::cout << "\n=== Campus Navigator ===\n"
+    std::cout << "\n=== Select an option ===\n"
               << " 1. Display all locations\n"
               << " 2. Search for a location by name\n"
               << " 3. Display locations by category\n"
