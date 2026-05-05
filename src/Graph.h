@@ -14,6 +14,7 @@
 #include <vector>
 #include <utility>
 #include <queue>
+#include <algorithm>
 
 struct Edge {
     LocationID to;
