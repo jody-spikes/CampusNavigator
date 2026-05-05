@@ -1,9 +1,7 @@
-//
-//  FileIO.cpp
-//  gp_project
-//
-//  Created by Tomi Babayemi on 5/1/26.
-//
+// ============================================================================
+// FileIO.cpp - Implementation of file loading and saving
+// OWNER: Tomi Babayemi
+// ============================================================================
 
 #include "FileIO.h"
 #include "Graph.h"
@@ -11,164 +9,149 @@
 #include "SortedIndex.h"
 
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <vector>
-#include <iostream>
-#include <stdexcept>
-
-using namespace std;
+#include <string>
 
 namespace FileIO {
 
-static vector<string> split(const string& line, char delim) {
-    vector<string> out;
-    string field;
-    stringstream ss(line);
+static std::vector<std::string> split(const std::string& line, char delim) {
+    std::vector<std::string> out;
+    std::stringstream ss(line);
+    std::string field;
 
-    while (getline(ss, field, delim)) {
+    while (std::getline(ss, field, delim)) {
         out.push_back(field);
     }
 
     return out;
 }
 
-bool loadCampus(const string& locationsFile,
-                const string& edgesFile,
+bool loadCampus(const std::string& locationsFile,
+                const std::string& edgesFile,
                 Graph& graph,
                 NameHashTable& hashTable,
                 SortedIndex& sortedIndex) {
-    ifstream locIn(locationsFile);
+    std::ifstream locIn(locationsFile);
     if (!locIn) {
-        cout << "Error: could not open locations file: " << locationsFile << endl;
+        std::cerr << "Error: could not open locations file: " << locationsFile << "\n";
         return false;
     }
 
-    string line;
+    std::string line;
     int lineNumber = 0;
 
-    while (getline(locIn, line)) {
+    while (std::getline(locIn, line)) {
         ++lineNumber;
 
         if (line.empty() || line[0] == '#') {
             continue;
         }
 
-        vector<string> fields = split(line, '|');
-        if (fields.size() != 4) {
-            cerr << "Warning: malformed location line " << lineNumber << " in " << locationsFile << " (expected 4 fields)." << endl;
+        if (line == "id|name|category|description") {
             continue;
         }
 
-        const string& idStr       = fields[0];
-        const string& name        = fields[1];
-        const string& categoryStr = fields[2];
-        const string& description = fields[3];
+        std::vector<std::string> fields = split(line, '|');
+        if (fields.size() != 4) {
+            std::cerr << "Error: malformed locations line " << lineNumber << "\n";
+            return false;
+        }
 
-        (void)idStr; // graph will assign its own ID
+        const std::string& name = fields[1];
+        Category category = stringToCategory(fields[2]);
+        const std::string& description = fields[3];
 
-        Category cat = stringToCategory(categoryStr);
-        LocationID id = graph.addLocation(name, cat, description);
-
+        LocationID id = graph.addLocation(name, category, description);
         if (id == INVALID_ID) {
-            cerr << "Warning: graph.addLocation failed on line "
-                 << lineNumber << " (name='" << name << "')." << endl;
-            continue;
+            std::cerr << "Error: failed to add location on line " << lineNumber << "\n";
+            return false;
         }
 
         hashTable.insert(name, id);
         sortedIndex.insert(name, id);
     }
 
-    locIn.close();
-
-    ifstream edgeIn(edgesFile);
+    std::ifstream edgeIn(edgesFile);
     if (!edgeIn) {
-        cerr << "Error: could not open edges file: "
-             << edgesFile << endl;
+        std::cerr << "Error: could not open edges file: " << edgesFile << "\n";
         return false;
     }
 
     lineNumber = 0;
-    while (getline(edgeIn, line)) {
+
+    while (std::getline(edgeIn, line)) {
         ++lineNumber;
 
         if (line.empty() || line[0] == '#') {
             continue;
         }
 
-        vector<string> fields = split(line, '|');
-        if (fields.size() != 3) {
-            cerr << "Warning: malformed edge line " << lineNumber << " in " << edgesFile << " (expected 3 fields)." << endl;
+        if (line == "from_id|to_id|distance") {
             continue;
         }
 
-        try {
-            LocationID from = static_cast<LocationID>(stoi(fields[0]));
-            LocationID to   = static_cast<LocationID>(stoi(fields[1]));
-            double distance = stod(fields[2]);
+        std::vector<std::string> fields = split(line, '|');
+        if (fields.size() != 3) {
+            std::cerr << "Error: malformed edges line " << lineNumber << "\n";
+            return false;
+        }
 
-            if (!graph.addEdge(from, to, distance)) {
-                cerr << "Warning: graph.addEdge failed on line " << lineNumber << " in " << edgesFile << " (from=" << from << ", to=" << to << ")." << endl;
-            }
-        } 
-        catch (const exception& e) {
-            cerr << "Warning: error parsing edge line " << lineNumber << " in " << edgesFile << ": " << e.what() << endl;
-            continue;
+        LocationID from = std::stoi(fields[0]);
+        LocationID to = std::stoi(fields[1]);
+        double distance = std::stod(fields[2]);
+
+        if (!graph.addEdge(from, to, distance)) {
+            std::cerr << "Error: invalid edge on line " << lineNumber << "\n";
+            return false;
         }
     }
 
-    edgeIn.close();
     return true;
 }
 
-bool saveCampus(const string& locationsFile,
-                const string& edgesFile,
+bool saveCampus(const std::string& locationsFile,
+                const std::string& edgesFile,
                 const Graph& graph) {
-    ofstream locOut(locationsFile);
+    std::ofstream locOut(locationsFile);
     if (!locOut) {
-        cout << "Error: could not open locations file for writing: " << locationsFile << endl;
+        std::cerr << "Error: could not open locations output file: " << locationsFile << "\n";
         return false;
     }
 
-    vector<LocationID> ids = graph.getAllIDs();
+    std::vector<LocationID> ids = graph.getAllIDs();
+
     for (LocationID id : ids) {
         const Location* loc = graph.getLocation(id);
         if (loc == nullptr) {
             continue;
         }
 
-        locOut << loc->id << '|' << loc->name << '|' << categoryToString(loc->category) << '|' << loc->description << '\n';
+        locOut << loc->id << '|'
+               << loc->name << '|'
+               << categoryToString(loc->category) << '|'
+               << loc->description << '\n';
     }
 
-    locOut.close();
-
-    ofstream edgeOut(edgesFile);
+    std::ofstream edgeOut(edgesFile);
     if (!edgeOut) {
-        cout << "Error: could not open edges file for writing: " << edgesFile << endl;
+        std::cerr << "Error: could not open edges output file: " << edgesFile << "\n";
         return false;
     }
 
-    for (LocationID from : ids) {
-        const Location* loc = graph.getLocation(from);
-        if (loc == nullptr) {
-            continue;
-        }
-
-        auto neighbors = graph.getNeighbors(from);
-        for (const auto& nb : neighbors) {
-            LocationID to   = nb.first;
-            double distance = nb.second;
-
-            if (from < to) {
-                edgeOut << from << '|'
-                        << to << '|'
-                        << distance << '\n';
+    for (LocationID id : ids) {
+        std::vector<std::pair<LocationID, double>> neighbors = graph.getNeighbors(id);
+        for (const auto& neighbor : neighbors) {
+            if (id < neighbor.first) {
+                edgeOut << id << '|'
+                        << neighbor.first << '|'
+                        << neighbor.second << '\n';
             }
         }
     }
 
-    edgeOut.close();
     return true;
 }
 
-}
+} // namespace FileIO
