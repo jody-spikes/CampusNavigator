@@ -26,6 +26,7 @@ static void printMenu() {
               << "Choice: ";
 }
 
+//Ascii art logo print func
 static void printLogo(){
     std::cout << R"(
    _____                                  _   _             _             _
@@ -47,7 +48,22 @@ static void printLocation(const Location& loc){
               << "      " << loc.description << "\n";
 }
 
+//Read line of string from user helper func
+static std::string readLine(const std::string& prompt){
+    std::cout << prompt;
+    std::string line;
+    std::getline(std::cin, line);
+    return line;
+}
 
+//Read double (for dist...) return false on bad parse
+static bool readDouble(){
+
+}
+
+//----
+//Main
+//----
 int main() {
     printLogo();
 
@@ -74,16 +90,16 @@ int main() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
-            case 0:
+            case 0: //quit case
                 std::cout << "Goodbye!\n";
                 return 0;
-            case 1: {
+            case 1: { //list all places case
                 auto ids = campus.listAll();
                 if(ids.empty()){
                     std::cout << "No locations loaded.\n";
                     break;
                 }
-                std::cout << "All locations (" << ids.size() << "):\n";
+                std::cout << "\nAll locations (" << ids.size() << "):\n";
                 for (LocationID id : ids){
                     const Location* loc = campus.getLocation(id);
                     if(loc) printLocation(*loc);
