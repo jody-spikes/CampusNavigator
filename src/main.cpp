@@ -1,6 +1,6 @@
 // ============================================================================
 // main.cpp - Entry point and menu loop
-// OWNER: Student 5 (Jody)
+// OWNER: Jody Spikes
 // ============================================================================
 
 #include "Campus.h"
@@ -28,17 +28,29 @@ static void printMenu() {
 
 static void printLogo(){
     std::cout << R"(
-   ____                                  _   _             _             _             
-  / ___|__ _ _ __ ___  _ __  _   _ ___  | \ | | __ ___   _(_) __ _  __ _| |_ ___  _ __ 
- | |   / _` | '_ ` _ \| '_ \| | | / __| |  \| |/ _` \ \ / / |/ _` |/ _` | __/ _ \| '__|
- | |__| (_| | | | | | | |_) | |_| \__ \ | |\  | (_| |\ V /| | (_| | (_| | || (_) | |   
-  \____\__,_|_| |_| |_| .__/ \__,_|___/ |_| \_|\__,_| \_/ |_|\__, |\__,_|\__\___/|_|   
-                      |_|                                    |___/                     
+   _____                                  _   _             _             _
+  / ____|                                | \ | |           (_)           | |
+ | |     __ _ _ __ ___  _ __  _   _ ___  |  \| | __ ___   ___  __ _  __ _| |_ ___  _ __
+ | |    / _` | '_ ` _ \| '_ \| | | / __| | . ` |/ _` \ \ / / |/ _` |/ _` | __/ _ \| '__|
+ | |___| (_| | | | | | | |_) | |_| \__ \ | |\  | (_| |\ V /| | (_| | (_| | || (_) | |
+  \_____\__,_|_| |_| |_| .__/ \__,_|___/ |_| \_|\__,_| \_/ |_|\__, |\__,_|\__\___/|_|
+                       | |                                     __/ |
+                       |_|                                    |___/
 
     )";
 }
 
+//Print Location helper function for casees 1,2,3,4 - ensures similar output
+static void printLocation(const Location& loc){
+    std::cout << " [" << loc.id << "] " << loc.name << "\n"
+              << "      Category: " << categoryToString(loc.category) << "\n"
+              << "      " << loc.description << "\n";
+}
+
+
 int main() {
+    printLogo();
+
     Campus campus;
 
     // Try to load the default dataset. Non-fatal if missing - user can still
@@ -65,10 +77,19 @@ int main() {
             case 0:
                 std::cout << "Goodbye!\n";
                 return 0;
-            case 1:
-                // TODO: call campus.listAll(), print each location's details.
-                std::cout << "[TODO] Display all locations\n";
+            case 1: {
+                auto ids = campus.listAll();
+                if(ids.empty()){
+                    std::cout << "No locations loaded.\n";
+                    break;
+                }
+                std::cout << "All locations (" << ids.size() << "):\n";
+                for (LocationID id : ids){
+                    const Location* loc = campus.getLocation(id);
+                    if(loc) printLocation(*loc);
+                }
                 break;
+            }
             case 2:
                 // TODO: prompt for name, call campus.findByName(), print result.
                 std::cout << "[TODO] Search by name\n";
