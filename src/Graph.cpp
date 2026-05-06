@@ -122,14 +122,14 @@ std::vector<LocationID> Graph::bfsPath(LocationID from, LocationID to) const {
     std::vector<LocationID> parent(n, INVALID_ID);
     std::vector<bool> visited(n, false);
 
-    std::queue<LocationID> frontier;
-    frontier.push(from);
+    std::vector<LocationID> frontier;
+    frontier.push_back(from);
     visited[from] = true;   // updated from Ian's code
 
     bool found = false;
     while (!frontier.empty()) {
         LocationID current = frontier.front();
-        frontier.pop();
+        frontier.erase(frontier.begin());
 
         if (current == to) { found = true; break; }
 
@@ -137,7 +137,7 @@ std::vector<LocationID> Graph::bfsPath(LocationID from, LocationID to) const {
             if (!visited[e.to] && active_[e.to]) {
                 visited[e.to] = true;
                 parent[e.to] = current;
-                frontier.push(e.to);
+                frontier.push_back(e.to);
             }
         }
     }
@@ -154,8 +154,14 @@ std::vector<LocationID> Graph::bfsPath(LocationID from, LocationID to) const {
     return path;
 }
 
-std::vector<LocationID> Graph::dijkstraPath(LocationID from, LocationID to) const {
+std::vector<double> Graph::dijkstraPath(LocationID start) const {
    // EXTENSION: extra credit. Stub for baseline.
-    (void)from; (void)to;
-    return {};
+	const LocationID n = static_cast<LocationID>(locations_.size());
+	bool visited[n] = {};
+	std::vector<int> distances(n, std::numeric_limits<int>::max());
+
+
+
+
+    return distances;
 }

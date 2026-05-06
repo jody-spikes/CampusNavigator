@@ -1,19 +1,13 @@
 #ifndef SORTED_INDEX_H
 #define SORTED_INDEX_H
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 // SortedIndex.h - Tree-based sorted index of locations by name
-// OWNER: Student 3
+// OWNER: Hailey Pieper
 // ----------------------------------------------------------------------------
 // A binary search tree keyed by location name, storing LocationIDs.
 // Used for the "display all locations in alphabetical order" feature.
-//
-// Baseline: plain BST is fine. If you have time, upgrade to AVL for
-// guaranteed O(log n) operations (this is worth points in the report).
-//
-// This index does NOT own Location data - it stores a LocationID that
-// points back into the Graph.
-// ============================================================================
+// ----------------------------------------------------------------------------
 
 #include "Location.h"
 #include <string>
@@ -35,9 +29,6 @@ public:
     // Returns all LocationIDs in alphabetical order by name.
     vector<LocationID> inOrder() const;
 
-    // EXTENSION: returns all LocationIDs whose names start with the given prefix.
-    vector<LocationID> findByPrefix(const string& prefix) const;
-
 private:
     struct Node {
         string name;
@@ -54,8 +45,6 @@ private:
     Node* insertHelper(Node* node, const string& name, LocationID id);
     Node* removeHelper(Node* node, const string& name, bool& removed);
     void inOrderHelper(Node* node, vector<LocationID>& out) const;
-    void prefixHelper(Node* node, const string& prefix,
-                      vector<LocationID>& out) const;
     void destroy(Node* node);
 };
 
