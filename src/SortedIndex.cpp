@@ -27,12 +27,6 @@ vector<LocationID> SortedIndex::inOrder() const {
     return result;
 }
 
-vector<LocationID> SortedIndex::findByPrefix(const string& prefix) const {
-    vector<LocationID> result;
-    prefixHelper(root_, prefix, result);
-    return result;
-}
-
 SortedIndex::Node* SortedIndex::insertHelper(Node* node,
                                              const string& name,
                                              LocationID id) {
@@ -108,21 +102,6 @@ void SortedIndex::inOrderHelper(Node* node, vector<LocationID>& out) const {
     inOrderHelper(node->left, out);
     out.push_back(node->id);
     inOrderHelper(node->right, out);
-}
-
-void SortedIndex::prefixHelper(Node* node, const string& prefix,
-                               vector<LocationID>& out) const {
-    if (node == nullptr) {
-        return;
-    }
-
-    prefixHelper(node->left, prefix, out);
-
-    if (node->name.compare(0, prefix.size(), prefix) == 0) {
-        out.push_back(node->id);
-    }
-
-    prefixHelper(node->right, prefix, out);
 }
 
 void SortedIndex::destroy(Node* node) {
