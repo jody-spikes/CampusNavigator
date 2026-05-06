@@ -29,7 +29,7 @@ public:
     // Returns all LocationIDs in alphabetical order by name.
     vector<LocationID> inOrder() const;
 
-    // EXTENSION: returns all LocationIDs whose names start with the given prefix.
+    // Returns all LocationIDs whose names start with the given prefix.
     vector<LocationID> findByPrefix(const string& prefix) const;
 
 private:
