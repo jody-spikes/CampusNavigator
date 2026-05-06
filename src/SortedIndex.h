@@ -1,19 +1,13 @@
 #ifndef SORTED_INDEX_H
 #define SORTED_INDEX_H
 
-// ============================================================================
+// ----------------------------------------------------------------------------
 // SortedIndex.h - Tree-based sorted index of locations by name
 // OWNER: Hailey Pieper
 // ----------------------------------------------------------------------------
 // A binary search tree keyed by location name, storing LocationIDs.
 // Used for the "display all locations in alphabetical order" feature.
-//
-// Baseline: plain BST is fine. If you have time, upgrade to AVL for
-// guaranteed O(log n) operations (this is worth points in the report).
-//
-// This index does NOT own Location data - it stores a LocationID that
-// points back into the Graph.
-// ============================================================================
+// ----------------------------------------------------------------------------
 
 #include "Location.h"
 #include <string>
