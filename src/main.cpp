@@ -8,9 +8,13 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <limits>
 
-// Prints the menu options from the project spec.
+// ----------------------------------------------------------------------------
+// Helpers
+// ----------------------------------------------------------------------------
+
 static void printMenu() {
     std::cout << "\n=== Select an option ===\n"
               << " 1. Display all locations\n"
@@ -26,7 +30,6 @@ static void printMenu() {
               << "Choice: ";
 }
 
-//Ascii art logo print func
 static void printLogo(){
     std::cout << R"(
    _____                                  _   _             _             _
@@ -41,23 +44,12 @@ static void printLogo(){
     )";
 }
 
-//Print Location helper function for casees 1,2,3,4 - ensures similar output
 static void printLocation(const Location& loc){
     std::cout << " [" << loc.id << "] " << loc.name << "\n"
               << "      Category: " << categoryToString(loc.category) << "\n"
               << "      " << loc.description << "\n";
 }
 
-static Category promptCategory() {
-    std::string input;
-
-    std::cout << "Enter category (Academic, Residence, Dining, Parking, Recreation, Other): ";
-    std::getline(std::cin, input);
-
-    return stringToCategory(input);
-}
-
-//Read line of string from user helper func
 static std::string readLine(const std::string& prompt){
     std::cout << prompt;
     std::string line;
@@ -65,28 +57,24 @@ static std::string readLine(const std::string& prompt){
     return line;
 }
 
-//Read double (for dist...) return false on bad parse
-static bool readDouble(){
-
+static Category promptCategory() {
+    std::string input = readLine(
+        "Enter category (Academic, Residence, Dining, Parking, Recreation, Other): ");
+    return stringToCategory(input);
 }
 
-//----
-//Main
-//----
+// ----------------------------------------------------------------------------
+// Main
+// ----------------------------------------------------------------------------
 int main() {
     printLogo();
 
     Campus campus;
 
-    // Try to load the default dataset. Non-fatal if missing - user can still
-    // add locations manually through the menu.
     if (!campus.load("data/locations.txt", "data/edges.txt")) {
         std::cout << "(No dataset loaded - starting empty.)\n";
     }
 
-    // TODO: flesh out each menu branch.
-    // The skeleton below handles input parsing and gives you a place to wire
-    // each option up to the corresponding Campus method.
     while (true) {
         printMenu();
         int choice;
@@ -99,101 +87,73 @@ int main() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
-            case 0: //quit case
+            case 0:
                 std::cout << "Goodbye!\n";
                 return 0;
-<<<<<<< HEAD
-            case 1: { //list all places case
+
+            case 1: {
                 auto ids = campus.listAll();
-                if(ids.empty()){
+                if (ids.empty()) {
                     std::cout << "No locations loaded.\n";
                     break;
                 }
                 std::cout << "\nAll locations (" << ids.size() << "):\n";
                 for (LocationID id : ids){
                     const Location* loc = campus.getLocation(id);
-                    if(loc) printLocation(*loc);
-=======
-            case 1: {
-                std::vector<LocationID> ids = campus.listAll();
-
-                if (ids.empty()) {
-                    std::cout << "No locations found.\n";
-                } else {
-                    for (LocationID id : ids) {
-                        const Location* loc = campus.getLocation(id);
-                        printLocation(loc);
-                        std::cout << "\n";
-                    }
->>>>>>> c19cec35f05b47657c31c872ac41a495c46b0db6
+                    if (loc) printLocation(*loc);
                 }
                 break;
             }
-            case 2:
-                std::string name;
-                std::cout << "Enter location name: ";
-                std::getline(std::cin, name);
 
+            case 2: {
+                std::string name = readLine("Enter location name: ");
                 LocationID id = campus.findByName(name);
                 if (id == INVALID_ID) {
                     std::cout << "Location not found.\n";
                 } else {
                     const Location* loc = campus.getLocation(id);
-                    printLocation(loc);
+                    if (loc) printLocation(*loc);
                 }
                 break;
-            case 3:
+            }
+
+            case 3: {
                 Category category = promptCategory();
                 std::vector<LocationID> ids = campus.listByCategory(category);
-
                 if (ids.empty()) {
                     std::cout << "No locations found in that category.\n";
                 } else {
                     for (LocationID id : ids) {
                         const Location* loc = campus.getLocation(id);
-                        printLocation(loc);
-                        std::cout << "\n";
+                        if (loc) printLocation(*loc);
                     }
                 }
                 break;
-            case 4:
-                std::string fromName, toName;
+            }
 
-                std::cout << "Enter starting location name: ";
-                std::getline(std::cin, fromName);
-
-                std::cout << "Enter destination location name: ";
-                std::getline(std::cin, toName);
-
+            case 4: {
+                std::string fromName = readLine("Enter starting location name: ");
+                std::string toName   = readLine("Enter destination location name: ");
                 std::vector<LocationID> path = campus.route(fromName, toName);
-
                 if (path.empty()) {
                     std::cout << "No route found.\n";
                 } else {
                     std::cout << "Route:\n";
                     for (size_t i = 0; i < path.size(); ++i) {
                         const Location* loc = campus.getLocation(path[i]);
-                        if (loc != nullptr) {
-                            std::cout << loc->name;
-                            if (i + 1 < path.size()) {
-                                std::cout << " -> ";
-                            }
-                        }
+                        if (!loc) continue;
+                        std::cout << loc->name;
+                        if (i + 1 < path.size()) std::cout << " -> ";
                     }
                     std::cout << "\n";
                 }
                 break;
-            case 5:
-                std::string name, description;
+            }
 
-                std::cout << "Enter location name: ";
-                std::getline(std::cin, name);
-
-                Category category = promptCategory();
-
-                std::cout << "Enter description: ";
-                std::getline(std::cin, description);
-
+            case 5: {
+                std::string name        = readLine("Enter location name: ");
+                Category    category    = promptCategory();
+                std::string description = readLine("Enter description: ");
                 LocationID id = campus.addLocation(name, category, description);
                 if (id == INVALID_ID) {
                     std::cout << "Failed to add location.\n";
@@ -201,28 +161,23 @@ int main() {
                     std::cout << "Location added with ID " << id << ".\n";
                 }
                 break;
-            case 6:
-                std::string name;
-                std::cout << "Enter location name to remove: ";
-                std::getline(std::cin, name);
+            }
 
+            case 6: {
+                std::string name = readLine("Enter location name to remove: ");
                 if (campus.removeLocation(name)) {
                     std::cout << "Location removed successfully.\n";
                 } else {
                     std::cout << "Failed to remove location.\n";
                 }
                 break;
-            case 7:
-                std::string fromName, toName;
-                double distance;
+            }
 
-                std::cout << "Enter first location name: ";
-                std::getline(std::cin, fromName);
-
-                std::cout << "Enter second location name: ";
-                std::getline(std::cin, toName);
-
+            case 7: {
+                std::string fromName = readLine("Enter first location name: ");
+                std::string toName   = readLine("Enter second location name: ");
                 std::cout << "Enter distance: ";
+                double distance;
                 if (!(std::cin >> distance)) {
                     std::cin.clear();
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -230,48 +185,38 @@ int main() {
                     break;
                 }
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
                 if (campus.addConnection(fromName, toName, distance)) {
                     std::cout << "Connection added successfully.\n";
                 } else {
                     std::cout << "Failed to add connection.\n";
                 }
                 break;
-            case 8:
-                std::string fromName, toName;
+            }
 
-                std::cout << "Enter first location name: ";
-                std::getline(std::cin, fromName);
-
-                std::cout << "Enter second location name: ";
-                std::getline(std::cin, toName);
-
+            case 8: {
+                std::string fromName = readLine("Enter first location name: ");
+                std::string toName   = readLine("Enter second location name: ");
                 if (campus.removeConnection(fromName, toName)) {
                     std::cout << "Connection removed successfully.\n";
                 } else {
                     std::cout << "Failed to remove connection.\n";
                 }
                 break;
-            case 9:
-                std::string oldName, newName, newDescription;
+            }
 
-                std::cout << "Enter current location name: ";
-                std::getline(std::cin, oldName);
-
-                std::cout << "Enter new location name: ";
-                std::getline(std::cin, newName);
-
-                Category newCategory = promptCategory();
-
-                std::cout << "Enter new description: ";
-                std::getline(std::cin, newDescription);
-
+            case 9: {
+                std::string oldName        = readLine("Enter current location name: ");
+                std::string newName        = readLine("Enter new location name: ");
+                Category    newCategory    = promptCategory();
+                std::string newDescription = readLine("Enter new description: ");
                 if (campus.updateLocation(oldName, newName, newCategory, newDescription)) {
                     std::cout << "Location updated successfully.\n";
                 } else {
                     std::cout << "Failed to update location.\n";
                 }
                 break;
+            }
+
             default:
                 std::cout << "Unknown choice.\n";
         }
