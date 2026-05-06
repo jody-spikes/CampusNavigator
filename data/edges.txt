@@ -1,6 +1,55 @@
+# edges.txt - Campus connections (undirected, distances in feet)
 # from_id|to_id|distance
+
+# --- Academic spine (the main quad loop) ---
+0|5|200.0
+5|9|180.0
+9|13|250.0
+11|13|200.0
+0|11|350.0
+
+# --- Central dining and chapel access ---
 0|1|150.5
-1|2|200.0
-2|3|175.0
-3|4|220.0
-0|4|300.0
+1|5|175.0
+1|6|220.0
+6|14|180.0
+
+# --- Residential cluster ---
+4|7|200.0
+7|8|150.0
+8|15|175.0
+15|18|220.0
+4|15|250.0
+
+# --- Quincy Dining serves the residential side ---
+12|7|120.0
+12|8|140.0
+12|18|180.0
+12|16|200.0
+
+# --- Residence to academic/dining links ---
+1|4|300.0
+1|7|280.0
+8|9|320.0
+
+# --- Parking lots near their buildings ---
+2|0|200.0
+2|5|250.0
+10|13|180.0
+10|11|200.0
+17|4|150.0
+17|7|220.0
+
+# --- Recreation ---
+3|14|250.0
+14|8|200.0
+3|4|300.0
+1|14|350.0
+
+# --- Alan Chapel (residential-side spiritual) ---
+16|7|250.0
+
+# --- Police station central access ---
+19|2|280.0
+19|1|300.0
+19|17|320.0
