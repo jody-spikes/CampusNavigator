@@ -75,7 +75,7 @@ public:
     std::vector<LocationID> bfsPath(LocationID from, LocationID to) const;
 
     // EXTENSION (extra credit): Dijkstra's shortest weighted path.
-    std::vector<int> dijkstraPath(LocationID start) const;
+    std::vector<double> dijkstraPath(LocationID start) const;
 
 private:
     std::vector<Location> locations_;
