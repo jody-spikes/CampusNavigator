@@ -29,9 +29,6 @@ public:
     // Returns all LocationIDs in alphabetical order by name.
     vector<LocationID> inOrder() const;
 
-    // Returns all LocationIDs whose names start with the given prefix.
-    vector<LocationID> findByPrefix(const string& prefix) const;
-
 private:
     struct Node {
         string name;
@@ -48,8 +45,6 @@ private:
     Node* insertHelper(Node* node, const string& name, LocationID id);
     Node* removeHelper(Node* node, const string& name, bool& removed);
     void inOrderHelper(Node* node, vector<LocationID>& out) const;
-    void prefixHelper(Node* node, const string& prefix,
-                      vector<LocationID>& out) const;
     void destroy(Node* node);
 };
 
