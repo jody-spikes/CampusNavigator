@@ -154,7 +154,7 @@ std::vector<LocationID> Graph::bfsPath(LocationID from, LocationID to) const {
     return path;
 }
 
-std::vector<int> Graph::dijkstraPath(LocationID start) const {
+std::vector<double> Graph::dijkstraPath(LocationID start) const {
    // EXTENSION: extra credit. Stub for baseline.
 	const LocationID n = static_cast<LocationID>(locations_.size());
 	bool visited[n] = {};
