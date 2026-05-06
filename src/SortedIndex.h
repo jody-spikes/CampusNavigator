@@ -3,7 +3,7 @@
 
 // ============================================================================
 // SortedIndex.h - Tree-based sorted index of locations by name
-// OWNER: Student 3
+// OWNER: Hailey Pieper
 // ----------------------------------------------------------------------------
 // A binary search tree keyed by location name, storing LocationIDs.
 // Used for the "display all locations in alphabetical order" feature.
