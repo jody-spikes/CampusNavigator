@@ -154,8 +154,14 @@ std::vector<LocationID> Graph::bfsPath(LocationID from, LocationID to) const {
     return path;
 }
 
-std::vector<LocationID> Graph::dijkstraPath(LocationID from, LocationID to) const {
+std::vector<int> Graph::dijkstraPath(LocationID start) const {
    // EXTENSION: extra credit. Stub for baseline.
-    (void)from; (void)to;
-    return {};
+	const LocationID n = static_cast<LocationID>(locations_.size());
+	bool visited[n] = {};
+	std::vector<int> distances(n, std::numeric_limits<int>::max());
+
+
+
+
+    return distances;
 }
